@@ -1,0 +1,56 @@
+SATLike3.0: baseline -> testResult_for_SATLike3.0.txt
+
+test_satlike33.sh -> SATLike3.3 : 全贪心的 random_prop + global advice -> testResult_for_SATLike3.1.3.txt
+test_satlike33_vari.sh -> SATLike3.3.1 : 贪心的 random_prop + random choose -> testResult_for_SATLike3.1.4.txt
+test_satlike33_vari.sh -> SATLike3.3.2 : global advice -> testResult_for_SATLike3.1.5.txt
+test_satlike35.sh -> SATLike3.5 : 不贪心的 random_prop + global advice -> testResult_for_SATLike3.1.7.txt
+test_satlike361.sh -> SATLike3.61 : 3.6为3.5改变choose_sense作用范围为only h_u_c_propagation；不是partial直接退出；后缀.1为遇到0直接退出程序且修复模 0 bug -> testResult_for_SATLike3.1.8.txt
+test_satlike361.sh -> SATLike3.6.1 : 为3.61增加close rate
+
+当前版本：
+test_satlike_forfun.sh -> SATLike_for_fun为3.6 hard_random_propagation乐观，随机赋值通过true_score乐观，仍然huc参考、suc随机   9.txt   不是partial直接退出
+test_satlike_forfun.1.sh -> SATLike_for_fun随机赋值采取随机增加解的多样性 （明显不行）
+
+
+test_satlike37.sh -> SATLike3.7为根据出现在一次最优解则基础权重+1；去掉hard_random_prop机制，ori_weight+basis_weight作为初始weight     11.txt
+SATLike3.7.2 basis_weight通过verify时出现一次+1计算 ori_weight+basis_weight作为初始weight 12.txt
+SATLike3.7.3 basis_weight通过verify时出现一次+1计算，只计算soft的   basis_weight作为初始weight 13.txt ？
+SATLike3.7.4 basis_weight通过verify时出现一次+1计算，不出现的-1  basis_weight作为初始weight 14.txt
+以上+1只加了1次，因此没用
+
+SATLike3.7.5 SATLike3.7.5为hard_random_prop机制有0.15或0.9的概率执行；其余与3.61一致     15.txt
+SATLike3.7.6 为SATLike3.7.5根据出现在一次最优解则基础权重+1（只在non_improve时实际增加），ori_weight（当前try有提升）或ori_weight+basis_weight作为soft初始weight（当前try没有提升，使用一次后basis对应-1，最小为0）     16.txt
+
+
+SATLike3.7.7：新增对找第一个解的启发式，若第一次try没有找到解，则给该次未满足的h子句初始权重+1，重复直至找到第一个解重置basis_weight；1+basis作为hard的初始权重，soft为0    16.txt
+SATLike3.7.6 为之前3.7.6版本不减小basis，不同的是non_improve大于0就执行ori_weight+basis_weight，否则不执行；每找到一个更优解就non_improve=0；hpprop为当前try有提升则+0.05，没有则-0.1    17.txt
+
+
+SATLike3.7.8：默认我的basis策略，10次没有提升后进行原始策略且basis减半（对于大实例要迅速进入局部最优，小实例会被switch策略捕捉）；basis只对soft生效   18.txt
+
+./SATLike_bcp：根据出现在一次最优解则基础权重+1；去掉hard_random_prop机制，ori_weight+basis_weight作为初始weight；累计10次没提升后basis减半    19.txt
+
+
+./SATLike_for_fun：根据出现在一次最优解且sat_count==1则基础权重+1；hpprob=1，0.8速率缩减；clause_weight/100+ori_weight+basis_weight作为初始weight    bcp.txt
+
+
+./SATLike_for_fun.1：deci改为找第一个hscore大于0的赋值，不干涉搜索过程   pray1.txt
+./SATLike_for_fun.1：新增调整hpprob，0.2为系数     pray2.txt    大失败
+
+./SATLike_for_fun：basis + org；s_u_p的basis_weight=100；   pray2.txt
+
+./SATLike_for_fun.1：deci的sscore计算时为basis + org，搜索时找到一个更优解把满足的basis+1，不清0；h_random_p贪心sscore     pray3.txt
+
+./SATLike_for_fun：deci和heuristic的basis + org;更优解的basis+1；h u 矛盾参考；第一个best solu在heuristic里随机一次；hrp找第一个未赋值的不贪心hscore
+
+===========
+./SATLike_for_fun.1：deci和heuristic的basis + org;更优解的basis+1；h u 矛盾找到第一个解后参考，否则随机；hrp找第一个未赋值的贪心make true   2.txt
+
+./SATLike_for_fun.2：更高效的实现./SATLike_for_fun.1——合并hrp和random assign   找到第一个hscore大于0的赋值，否则这个为赋值的随机   4.txt
+
+./SATLike_for_fun.3：以上，参考global opt
+
+./SATLike_for_fun：deci的sscore计算时为basis + org，搜索时找到一个更优解把满足的basis+1，不清0；h_random_p直接根据sense     pray3.txt
+16          15        93        65           66         328.7469       329.5316         0.5184       0.5283
+
+./SATLike_for_fun.3：deci的sscore计算时为basis + org，搜索时找到一个更优解把满足的basis+1，使用一次若大于0.5则-0.5；合并hrp和random，根据hscore；hup和random    pray5.txt
